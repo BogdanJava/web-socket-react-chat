@@ -11,7 +11,7 @@ let connectingElement = document.querySelector('.connecting')
 let stompClient = null
 let username = null
 
-let colors = colors = [
+let colors = [
     '#2196F3', '#32c787', '#00BCD4', '#ff5652',
     '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
 ];
@@ -21,7 +21,7 @@ function connect(event) {
     if (username) {
         usernamePage.classList.add('hidden')
         chatPage.classList.remove('hidden')
-        let socket = new SockJS('ws')
+        let socket = new SockJS('/ws')
         stompClient = Stomp.over(socket)
         stompClient.connect({}, onConnected, onError)
     }
@@ -29,7 +29,7 @@ function connect(event) {
 }
 
 function onConnected() {
-    stompClient.subscribe('topic/public', onMessageReceived)
+    stompClient.subscribe('/topic/public', onMessageReceived)
     stompClient.send('/app/chat.addUser',
         {},
         JSON.stringify({
@@ -61,5 +61,50 @@ function sendMessage(event) {
 
 function onMessageReceived(payload) {
     let message = JSON.parse(payload.body)
-
+    let messageElement = document.createElement('li')
+    switch(message.type) {
+        case 'JOIN': {
+            messageElement.classList.add('event-message')
+            message.content = message.sender + " joined!"
+            break
+        }
+        case 'LEAVE': {
+            messageElement.classList.add('event-message')
+            message.content = message.sender + " left!"
+            break
+        }
+        default: {
+            console.log('here')
+            messageElement.classList.add('chat-message')
+            let avatarElement = document.createElement('i')
+            let avatarText = document.createTextNode(message.sender[0])
+            avatarElement.appendChild(avatarText)
+            avatarElement.style['background-color'] = getAvatarColor(message.sender)
+            messageElement.appendChild(avatarElement)
+            let usernameElement = document.createElement('span')
+            let usernameText = document.createTextNode(message.sender)
+            usernameElement.appendChild(usernameText)
+            messageElement.appendChild(usernameElement)
+            break
+        }
+    }
+    let textElement = document.createElement('p')
+    let messageText = document.createTextNode(message.content)
+    textElement.appendChild(messageText)
+    messageElement.appendChild(textElement)
+    messageArea.appendChild(messageElement)
+    messageArea.scrollTop = messageArea.scrollHeight
 }
+
+function getAvatarColor(messageSender) {
+    let hash = 0
+    for(let i = 0; i < messageSender.length; i++) {
+        hash = 31 * hash + messageSender.charCodeAt(i)
+    }
+    let index = Math.abs(hash % colors.length)
+    return colors[index]
+}
+
+usernameForm.addEventListener('submit', connect, true)
+messageForm.addEventListener('submit', sendMessage, true)
+

@@ -39,7 +39,7 @@ public class WebSocketEventListener {
         if(username != null) {
             logger.info("User disconnected: " + username);
             ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setMessageType(LEAVE);
+            chatMessage.setType(LEAVE);
             chatMessage.setSender(username);
 
             this.sendingOperations.convertAndSend("/topic/public", chatMessage);

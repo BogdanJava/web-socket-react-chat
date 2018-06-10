@@ -17,12 +17,14 @@
 <div id="username-page">
     <div class="username-page-container">
         <h1 class="title">Type your username</h1>
-        <div class="form-group">
-            <input autocomplete="off" type="text" class="form-control" id="name" placeholder="Username" >
-        </div>
-        <div class="form-group">
-            <button type="submit" class="accent username-submit">Start chatting</button>
-        </div>
+        <form id="usernameForm">
+            <div class="form-group">
+                <input autocomplete="off" type="text" class="form-control" id="name" placeholder="Username">
+            </div>
+            <div class="form-group">
+                <button type="submit" class="accent username-submit">Start chatting</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -40,7 +42,8 @@
         <form id="messageForm" name="messageForm">
             <div class="form-group">
                 <div class="input-group clearfix">
-                    <input autocomplete="off" placeholder="Type a message..." type="text" id="message" class="form-control">
+                    <input autocomplete="off" placeholder="Type a message..." type="text" id="message"
+                           class="form-control">
                     <button type="submit" class="primary">Send</button>
                 </div>
             </div>
